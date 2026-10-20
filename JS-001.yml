@@ -1,0 +1,15 @@
+id: JS-001
+title: SQL Injection in Login
+cwe: CWE-89
+owasp: A03:2021 Injection
+severity: critical
+status: retest-passed
+repo: juice-shop
+files: [routes/login.ts:34]
+tool: semgrep
+rule: javascript.sequelize.security.audit.sequelize-injection-express
+first_seen: 2026-10-06
+closed_at: 2026-10-13
+description: User-supplied email is concatenated into a raw SQL query, so a crafted value changes the query itself.
+recommendation: Use parameterized queries (bind variables) and never build SQL by string concatenation.
+notes: Confirmed with grep. Retest on 2026-10-13 shows the query is parameterized.

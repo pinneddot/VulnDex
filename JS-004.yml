@@ -1,0 +1,14 @@
+id: JS-004
+title: Basket Access Without Ownership Check
+cwe: CWE-639
+owasp: A01:2021 Broken Access Control
+severity: high
+status: new
+repo: juice-shop
+files: [routes/basket.ts:18]
+tool: manual
+rule: manual-review
+first_seen: 2026-10-19
+description: A basket is fetched by the ID in the URL without checking it belongs to the logged-in user.
+recommendation: Compare the basket owner to the authenticated user before returning data.
+notes: Found during manual review. Needs a grep screenshot for evidence.

@@ -1,0 +1,15 @@
+id: JS-006
+title: Insecure Random in Test Helper
+cwe: CWE-338
+owasp: A02:2021 Cryptographic Failures
+severity: low
+status: false-positive
+repo: juice-shop
+files: [test/helpers/seed.ts:9]
+tool: semgrep
+rule: javascript.lang.security.audit.insecure-random
+first_seen: 2026-10-08
+closed_at: 2026-10-09
+description: Math.random() flagged, but it is only used to generate test seed data.
+recommendation: None. Not used for security decisions.
+notes: Closed as false positive. Grep confirmed it is never imported by production code.

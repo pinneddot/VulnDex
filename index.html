@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VAPT Findings Tracker</title>
+<style>
+:root{--ink:#12202e;--paper:#eef1f4;--panel:#fff;--line:#cfd7de;--mute:#5a6b7a;--accent:#1f4e79;
+--critical:#a61e2d;}
+@media (prefers-color-scheme:dark){:root{--ink:#e6edf3;--paper:#0f1720;--panel:#17222e;--line:#2a3a4a;--mute:#93a4b4;--accent:#7db3e6}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:960px;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+h1{font:600 2.1rem/1.15 Georgia,"Times New Roman",serif;margin:0 0 .4rem}
+.sub{color:var(--mute);max-width:60ch;margin:0 0 1rem}
+.demo{background:var(--panel);border-left:4px solid var(--accent);padding:.6rem .9rem;font-size:.9rem;margin:0 0 2rem}
+h2{font:600 1.15rem Georgia,serif;margin:2.2rem 0 .8rem}
+.pipeline{display:flex;gap:4px;min-height:92px}
+.seg{display:flex;flex-direction:column;justify-content:space-between;padding:.7rem .8rem;color:#fff;min-width:96px}
+.seg b{font:600 2rem/1 Georgia,serif}
+.seg span{font-size:.82rem;line-height:1.25}
+.s-new{background:#7a8896}.s-true-positive{background:#b4541f}
+.s-remediated{background:#2f6f8f}.s-retest-passed{background:#2d7a5a}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-top:1.4rem}
+.stat{background:var(--panel);border:1px solid var(--line);padding:1rem}
+.stat .v{font:600 1.7rem Georgia,serif}.stat .l{color:var(--mute);font-size:.88rem}
+.sevrow{display:grid;grid-template-columns:80px 1fr 30px;gap:.7rem;align-items:center;margin:.35rem 0}
+.bar{background:var(--line);height:12px;display:block}.bar i{display:block;height:100%}
+.sevn{text-align:right;font-variant-numeric:tabular-nums}
+.filters{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+.filters button{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:.35rem .8rem;font:inherit;font-size:.88rem;cursor:pointer}
+.filters button[aria-pressed=true]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.filters button:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.row{background:var(--panel);border:1px solid var(--line);margin-bottom:6px}
+summary{display:grid;grid-template-columns:14px 64px 1fr auto;gap:.7rem;align-items:center;padding:.75rem .9rem;cursor:pointer;list-style:none}
+summary::-webkit-details-marker{display:none}
+.dot{width:12px;height:12px;border-radius:50%}
+.fid{color:var(--mute);font-variant-numeric:tabular-nums}
+.chip{font-size:.78rem;padding:.15rem .55rem;border:1px solid var(--line);white-space:nowrap}
+.detail{padding:0 1rem 1rem 3.1rem;border-top:1px solid var(--line)}
+.detail h4{margin:1rem 0 .2rem;font-size:.95rem}
+.detail ul{margin:.2rem 0;padding-left:1.1rem}
+dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.6rem 1.2rem;margin:.8rem 0}
+dt{color:var(--mute);font-size:.8rem}dd{margin:0}
+code{font:.85rem ui-monospace,Menlo,Consolas,monospace;word-break:break-all}
+footer{color:var(--mute);font-size:.85rem;margin-top:3rem}
+footer a{color:var(--accent)}
+@media (max-width:560px){summary{grid-template-columns:14px 1fr;}.fid,.chip{grid-column:2}.pipeline{flex-wrap:wrap}.seg{flex:1 1 45% !important}.detail{padding-left:1rem}}
+</style></head>
+<body><main>
+<h1>VAPT Findings Tracker</h1>
+<p class="sub">A live view of code-review findings from first scan to passed retest, built from plain files in git.</p>
+<p class="demo">Demo data: findings from an intentionally vulnerable practice app (OWASP Juice Shop). No employer or client information appears here.</p>
+<h2>Where every finding stands</h2>
+<div class="pipeline"><div class="seg s-new" style="flex:1" title="New"><b>1</b><span>New</span></div><div class="seg s-true-positive" style="flex:2" title="Confirmed"><b>2</b><span>Confirmed</span></div><div class="seg s-remediated" style="flex:1" title="Fixed, awaiting retest"><b>1</b><span>Fixed, awaiting retest</span></div><div class="seg s-retest-passed" style="flex:2" title="Retest passed"><b>2</b><span>Retest passed</span></div></div>
+<p class="sub" style="margin-top:.6rem">Plus 1 closed as false positive.</p>
+<div class="stats"><div class="stat"><div class="v">3</div><div class="l">Open findings</div></div><div class="stat"><div class="v">7.7 days</div><div class="l">Average time to fix</div></div><div class="stat"><div class="v">67%</div><div class="l">Retests passed</div></div><div class="stat"><div class="v">14%</div><div class="l">Scanner noise (false positives)</div></div></div>
+<h2>Findings by severity</h2>
+<div class="sevrow"><span class="sevname">Critical</span><span class="bar"><i style="width:14.285714285714286%;background:#a61e2d"></i></span><span class="sevn">1</span></div><div class="sevrow"><span class="sevname">High</span><span class="bar"><i style="width:42.857142857142854%;background:#d2561f"></i></span><span class="sevn">3</span></div><div class="sevrow"><span class="sevname">Medium</span><span class="bar"><i style="width:28.571428571428573%;background:#c99a1a"></i></span><span class="sevn">2</span></div><div class="sevrow"><span class="sevname">Low</span><span class="bar"><i style="width:14.285714285714286%;background:#3f7d6b"></i></span><span class="sevn">1</span></div><div class="sevrow"><span class="sevname">Info</span><span class="bar"><i style="width:0.0%;background:#5f7d97"></i></span><span class="sevn">0</span></div>
+<h2>All findings</h2>
+<div class="filters" id="filters"><button data-f="new">New</button><button data-f="true-positive">Confirmed</button><button data-f="remediated">Fixed, awaiting retest</button><button data-f="retest-passed">Retest passed</button><button data-f="false-positive">False positive</button></div>
+<div id="list">
+<details class="row" data-sev="critical" data-status="retest-passed">
+  <summary>
+    <span class="dot" style="background:#a61e2d"></span>
+    <span class="fid">JS-001</span>
+    <span class="ftitle">SQL Injection in Login</span>
+    <span class="chip st-retest-passed">Retest passed</span>
+  </summary>
+  <div class="detail">
+    <p>User-supplied email is concatenated into a raw SQL query, so a crafted value changes the query itself.</p>
+    <dl>
+      <div><dt>Severity</dt><dd>Critical</dd></div>
+      <div><dt>Weakness</dt><dd>CWE-89</dd></div>
+      <div><dt>OWASP</dt><dd>A03:2021 Injection</dd></div>
+      <div><dt>Found by</dt><dd>semgrep / javascript.sequelize.security.audit.sequelize-injection-express</dd></div>
+      <div><dt>First seen</dt><dd>2026-10-06</dd></div>
+      <div><dt>Closed</dt><dd>2026-10-13</dd></div>
+    </dl>
+    <h4>Affected files</h4><ul><li><code>routes/login.ts:34</code></li></ul>
+    <h4>Recommendation</h4><p>Use parameterized queries (bind variables) and never build SQL by string concatenation.</p>
+    <h4>Reviewer notes</h4><p>Confirmed with grep. Retest on 2026-10-13 shows the query is parameterized.</p>
+  </div>
+</details>
+<details class="row" data-sev="high" data-status="remediated">
+  <summary>
+    <span class="dot" style="background:#d2561f"></span>
+    <span class="fid">JS-002</span>
+    <span class="ftitle">Hardcoded JWT Private Key</span>
+    <span class="chip st-remediated">Fixed, awaiting retest</span>
+  </summary>
+  <div class="detail">
+    <p>The key used to sign login tokens is written in the source code, so anyone with repo access can forge tokens.</p>
+    <dl>
+      <div><dt>Severity</dt><dd>High</dd></div>
+      <div><dt>Weakness</dt><dd>CWE-798</dd></div>
+      <div><dt>OWASP</dt><dd>A07:2021 Identification and Authentication Failures</dd></div>
+      <div><dt>Found by</dt><dd>semgrep / generic.secrets.security.detected-private-key</dd></div>
+      <div><dt>First seen</dt><dd>2026-10-06</dd></div>
+      <div><dt>Closed</dt><dd>2026-10-15</dd></div>
+    </dl>
+    <h4>Affected files</h4><ul><li><code>lib/insecurity.ts:23</code></li></ul>
+    <h4>Recommendation</h4><p>Load the key from a secrets manager or environment variable and rotate the exposed key.</p>
+    <h4>Reviewer notes</h4><p>Fix merged. Waiting for retest.</p>
+  </div>
+</details>
+<details class="row" data-sev="high" data-status="true-positive">
+  <summary>
+    <span class="dot" style="background:#d2561f"></span>
+    <span class="fid">JS-003</span>
+    <span class="ftitle">Reflected Cross-Site Scripting in Search</span>
+    <span class="chip st-true-positive">Confirmed</span>
+  </summary>
+  <div class="detail">
+    <p>Search text is marked as trusted HTML, so a script typed into the search box runs in the visitor&#x27;s browser.</p>
+    <dl>
+      <div><dt>Severity</dt><dd>High</dd></div>
+      <div><dt>Weakness</dt><dd>CWE-79</dd></div>
+      <div><dt>OWASP</dt><dd>A03:2021 Injection</dd></div>
+      <div><dt>Found by</dt><dd>semgrep / typescript.angular.security.audit.angular-domsanitizer</dd></div>
+      <div><dt>First seen</dt><dd>2026-10-08</dd></div>
+      
+    </dl>
+    <h4>Affected files</h4><ul><li><code>frontend/src/app/search-result/search-result.component.ts:171</code></li></ul>
+    <h4>Recommendation</h4><p>Stop bypassing Angular sanitization and encode output by default.</p>
+    <h4>Reviewer notes</h4><p>Reported to developers, fix pending.</p>
+  </div>
+</details>
+<details class="row" data-sev="high" data-status="new">
+  <summary>
+    <span class="dot" style="background:#d2561f"></span>
+    <span class="fid">JS-004</span>
+    <span class="ftitle">Basket Access Without Ownership Check</span>
+    <span class="chip st-new">New</span>
+  </summary>
+  <div class="detail">
+    <p>A basket is fetched by the ID in the URL without checking it belongs to the logged-in user.</p>
+    <dl>
+      <div><dt>Severity</dt><dd>High</dd></div>
+      <div><dt>Weakness</dt><dd>CWE-639</dd></div>
+      <div><dt>OWASP</dt><dd>A01:2021 Broken Access Control</dd></div>
+      <div><dt>Found by</dt><dd>manual / manual-review</dd></div>
+      <div><dt>First seen</dt><dd>2026-10-19</dd></div>
+      
+    </dl>
+    <h4>Affected files</h4><ul><li><code>routes/basket.ts:18</code></li></ul>
+    <h4>Recommendation</h4><p>Compare the basket owner to the authenticated user before returning data.</p>
+    <h4>Reviewer notes</h4><p>Found during manual review. Needs a grep screenshot for evidence.</p>
+  </div>
+</details>
+<details class="row" data-sev="medium" data-status="true-positive">
+  <summary>
+    <span class="dot" style="background:#c99a1a"></span>
+    <span class="fid">JS-005</span>
+    <span class="ftitle">Weak Password Hashing (MD5)</span>
+    <span class="chip st-true-positive">Confirmed</span>
+  </summary>
+  <div class="detail">
+    <p>Passwords are hashed with MD5, which is fast to crack with common tools.</p>
+    <dl>
+      <div><dt>Severity</dt><dd>Medium</dd></div>
+      <div><dt>Weakness</dt><dd>CWE-328</dd></div>
+      <div><dt>OWASP</dt><dd>A02:2021 Cryptographic Failures</dd></div>
+      <div><dt>Found by</dt><dd>semgrep / javascript.lang.security.audit.md5-used-as-password</dd></div>
+      <div><dt>First seen</dt><dd>2026-10-08</dd></div>
+      
+    </dl>
+    <h4>Affected files</h4><ul><li><code>lib/insecurity.ts:43</code></li></ul>
+    <h4>Recommendation</h4><p>Switch to bcrypt, scrypt or Argon2 with a per-user salt.</p>
+    <h4>Reviewer notes</h4><p>Waiting on developer justification.</p>
+  </div>
+</details>
+<details class="row" data-sev="medium" data-status="retest-passed">
+  <summary>
+    <span class="dot" style="background:#c99a1a"></span>
+    <span class="fid">JS-007</span>
+    <span class="ftitle">Exposed Directory Listing (/ftp)</span>
+    <span class="chip st-retest-passed">Retest passed</span>
+  </summary>
+  <div class="detail">
+    <p>A folder listing is served publicly, exposing backup and internal files.</p>
+    <dl>
+      <div><dt>Severity</dt><dd>Medium</dd></div>
+      <div><dt>Weakness</dt><dd>CWE-538</dd></div>
+      <div><dt>OWASP</dt><dd>A05:2021 Security Misconfiguration</dd></div>
+      <div><dt>Found by</dt><dd>semgrep / javascript.express.security.audit.express-serve-index</dd></div>
+      <div><dt>First seen</dt><dd>2026-10-07</dd></div>
+      <div><dt>Closed</dt><dd>2026-10-14</dd></div>
+    </dl>
+    <h4>Affected files</h4><ul><li><code>server.ts:262</code></li></ul>
+    <h4>Recommendation</h4><p>Remove the directory listing and keep sensitive files out of web-served folders.</p>
+    <h4>Reviewer notes</h4><p>Retest passed.</p>
+  </div>
+</details>
+<details class="row" data-sev="low" data-status="false-positive">
+  <summary>
+    <span class="dot" style="background:#3f7d6b"></span>
+    <span class="fid">JS-006</span>
+    <span class="ftitle">Insecure Random in Test Helper</span>
+    <span class="chip st-false-positive">False positive</span>
+  </summary>
+  <div class="detail">
+    <p>Math.random() flagged, but it is only used to generate test seed data.</p>
+    <dl>
+      <div><dt>Severity</dt><dd>Low</dd></div>
+      <div><dt>Weakness</dt><dd>CWE-338</dd></div>
+      <div><dt>OWASP</dt><dd>A02:2021 Cryptographic Failures</dd></div>
+      <div><dt>Found by</dt><dd>semgrep / javascript.lang.security.audit.insecure-random</dd></div>
+      <div><dt>First seen</dt><dd>2026-10-08</dd></div>
+      <div><dt>Closed</dt><dd>2026-10-09</dd></div>
+    </dl>
+    <h4>Affected files</h4><ul><li><code>test/helpers/seed.ts:9</code></li></ul>
+    <h4>Recommendation</h4><p>None. Not used for security decisions.</p>
+    <h4>Reviewer notes</h4><p>Closed as false positive. Grep confirmed it is never imported by production code.</p>
+  </div>
+</details></div>
+<footer>Built 2026-10-20 from <code>findings/*.yml</code>. Raw data: <a href="findings.csv">findings.csv</a>.</footer>
+</main>
+<script>
+(function(){
+  var active=null,btns=document.querySelectorAll('#filters button'),rows=document.querySelectorAll('.row');
+  btns.forEach(function(b){b.setAttribute('aria-pressed','false');b.addEventListener('click',function(){
+    active=(active===b.dataset.f)?null:b.dataset.f;
+    btns.forEach(function(x){x.setAttribute('aria-pressed',String(x.dataset.f===active))});
+    rows.forEach(function(r){r.hidden=!!active&&r.dataset.status!==active});
+  })});
+})();
+</script>
+</body></html>

@@ -1,0 +1,14 @@
+id: JS-003
+title: Reflected Cross-Site Scripting in Search
+cwe: CWE-79
+owasp: A03:2021 Injection
+severity: high
+status: true-positive
+repo: juice-shop
+files: [frontend/src/app/search-result/search-result.component.ts:171]
+tool: semgrep
+rule: typescript.angular.security.audit.angular-domsanitizer
+first_seen: 2026-10-08
+description: Search text is marked as trusted HTML, so a script typed into the search box runs in the visitor's browser.
+recommendation: Stop bypassing Angular sanitization and encode output by default.
+notes: Reported to developers, fix pending.

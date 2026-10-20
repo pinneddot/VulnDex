@@ -1,0 +1,3 @@
+title: VAPT Findings Tracker
+subtitle: A live view of code-review findings from first scan to passed retest, built from plain files in git.
+demo_data: true   # set to false for a private tracker with real work

@@ -1,0 +1,8 @@
+id,title,cwe,owasp,severity,status,repo,files,tool,rule,first_seen,closed_at
+JS-001,SQL Injection in Login,CWE-89,A03:2021 Injection,critical,retest-passed,juice-shop,routes/login.ts:34,semgrep,javascript.sequelize.security.audit.sequelize-injection-express,2026-10-06,2026-10-13
+JS-002,Hardcoded JWT Private Key,CWE-798,A07:2021 Identification and Authentication Failures,high,remediated,juice-shop,lib/insecurity.ts:23,semgrep,generic.secrets.security.detected-private-key,2026-10-06,2026-10-15
+JS-003,Reflected Cross-Site Scripting in Search,CWE-79,A03:2021 Injection,high,true-positive,juice-shop,frontend/src/app/search-result/search-result.component.ts:171,semgrep,typescript.angular.security.audit.angular-domsanitizer,2026-10-08,
+JS-004,Basket Access Without Ownership Check,CWE-639,A01:2021 Broken Access Control,high,new,juice-shop,routes/basket.ts:18,manual,manual-review,2026-10-19,
+JS-005,Weak Password Hashing (MD5),CWE-328,A02:2021 Cryptographic Failures,medium,true-positive,juice-shop,lib/insecurity.ts:43,semgrep,javascript.lang.security.audit.md5-used-as-password,2026-10-08,
+JS-006,Insecure Random in Test Helper,CWE-338,A02:2021 Cryptographic Failures,low,false-positive,juice-shop,test/helpers/seed.ts:9,semgrep,javascript.lang.security.audit.insecure-random,2026-10-08,2026-10-09
+JS-007,Exposed Directory Listing (/ftp),CWE-538,A05:2021 Security Misconfiguration,medium,retest-passed,juice-shop,server.ts:262,semgrep,javascript.express.security.audit.express-serve-index,2026-10-07,2026-10-14
