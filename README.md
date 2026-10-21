@@ -1,4 +1,4 @@
-# VulnDex
+# VulnDex by Pinneddot
 
 My running index of security findings and lessons, tracked from first discovery to confirmed fix.
 
@@ -6,7 +6,7 @@ My running index of security findings and lessons, tracked from first discovery 
 
 ## Why I built this
 
-I work in identity and access management and I am growing into application security testing, mainly code reviews and penetration testing. At work, findings live in tickets and spreadsheets that I can't share. VulnDex is the public version of how I work: the same triage habits and the same lifecycle, applied to practice targets so everything here is mine to show.
+I work in identity and access management and growing into application security testing, mainly code reviews and penetration testing. At work, findings live in tickets and spreadsheets that are kept internal. VulnDex is the public version of how I work: the same triage habits and the same lifecycle, applied to practice targets so everything here is mine to show.
 
 It also solves a practical problem. I wanted one place where a finding is more than a line in a report: where it came from, how I confirmed it, what I recommended, and whether the fix held up on retest.
 
@@ -34,7 +34,7 @@ scan (Semgrep, manual testing) -> findings/*.yml -> scripts/build.py -> dashboar
 
 No database, no servers. Everything is plain text in git, so the full history of every finding is preserved.
 
-## Run it yourself
+## Running it
 
 ```bash
 pip install -r requirements.txt
