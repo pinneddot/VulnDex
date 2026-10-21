@@ -1,3 +1,3 @@
-title: VAPT Findings Tracker
-subtitle: A live view of code-review findings from first scan to passed retest, built from plain files in git.
+title: VulnDex
+subtitle: My running index of security findings and lessons, tracked from first discovery to confirmed fix.
 demo_data: true   # set to false for a private tracker with real work

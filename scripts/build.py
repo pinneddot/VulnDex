@@ -29,7 +29,9 @@ STAGE_LABEL = {
     "retest-passed": "Retest passed",
     "false-positive": "False positive",
 }
-REQUIRED = ["id", "title", "cwe", "severity", "status", "repo", "first_seen"]
+TYPES = ["code-review", "web-app", "api", "infrastructure", "lab"]
+REQUIRED_ALL = ["id", "title", "cwe", "first_seen"]
+REQUIRED_ASSESSMENT = ["severity", "status", "target"]  # not needed for learning labs
 SEV_COLOR = {
     "critical": "#a61e2d",
     "high": "#d2561f",
@@ -54,13 +56,23 @@ def load_findings():
         data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         fid = data.get("id", path.name)
         try:
-            missing = [k for k in REQUIRED if k not in data]
+            # accept the older field names too
+            if "repo" in data and "target" not in data:
+                data["target"] = data.pop("repo")
+            if "rule" in data and "reference" not in data:
+                data["reference"] = data.pop("rule")
+            data.setdefault("type", "code-review")
+            if data["type"] not in TYPES:
+                raise ValueError(f"{fid}: type must be one of {TYPES}")
+            need = REQUIRED_ALL + ([] if data["type"] == "lab" else REQUIRED_ASSESSMENT)
+            missing = [k for k in need if k not in data]
             if missing:
                 raise ValueError(f"{fid}: missing fields {missing}")
-            if data["severity"] not in SEVERITIES:
-                raise ValueError(f"{fid}: severity must be one of {SEVERITIES}")
-            if data["status"] not in STATUSES:
-                raise ValueError(f"{fid}: status must be one of {STATUSES}")
+            if data["type"] != "lab":
+                if data["severity"] not in SEVERITIES:
+                    raise ValueError(f"{fid}: severity must be one of {SEVERITIES}")
+                if data["status"] not in STATUSES:
+                    raise ValueError(f"{fid}: status must be one of {STATUSES}")
             data["first_seen"] = to_date(data["first_seen"], "first_seen", fid)
             if data.get("closed_at"):
                 data["closed_at"] = to_date(data["closed_at"], "closed_at", fid)
@@ -95,7 +107,7 @@ def e(x):
     return html.escape(str(x))
 
 
-def render(findings, m):
+def render(findings, m, labs=()):
     config = yaml.safe_load((ROOT / "tracker.yml").read_text(encoding="utf-8"))
     title = config.get("title", "VAPT Tracker")
     subtitle = config.get("subtitle", "")
@@ -142,9 +154,11 @@ def render(findings, m):
     <p>{e(f.get('description', ''))}</p>
     <dl>
       <div><dt>Severity</dt><dd>{f['severity'].capitalize()}</dd></div>
-      <div><dt>Weakness</dt><dd>{e(f['cwe'])}</dd></div>
+      <div><dt>Type</dt><dd>{e(f['type'])}</dd></div>
+      <div><dt>Target</dt><dd>{e(f['target'])}</dd></div>
+      <div><dt>Weakness</dt><dd>{e(f['cwe'])}{(' / ' + e(f['cve'])) if f.get('cve') else ''}</dd></div>
       <div><dt>OWASP</dt><dd>{e(f.get('owasp', 'n/a'))}</dd></div>
-      <div><dt>Found by</dt><dd>{e(f.get('tool', 'n/a'))}{(' / ' + e(f['rule'])) if f.get('rule') else ''}</dd></div>
+      <div><dt>Found by</dt><dd>{e(f.get('tool', 'n/a'))}{(' / ' + e(f['reference'])) if f.get('reference') else ''}</dd></div>
       <div><dt>First seen</dt><dd>{f['first_seen']}</dd></div>
       {closed}
     </dl>
@@ -153,6 +167,20 @@ def render(findings, m):
     <h4>Reviewer notes</h4><p>{e(f.get('notes', ''))}</p>
   </div>
 </details>""")
+
+    lab_rows = "".join(f"""
+<details class="row">
+  <summary><span class="dot" style="background:var(--accent)"></span>
+    <span class="fid">{e(l['id'])}</span><span class="ftitle">{e(l['title'])}</span>
+    <span class="chip">{e(l.get('status', 'solved'))}</span></summary>
+  <div class="detail"><p>{e(l.get('description', ''))}</p>
+    <dl><div><dt>Weakness</dt><dd>{e(l['cwe'])}</dd></div>
+    <div><dt>Where</dt><dd>{e(l.get('target', ''))}</dd></div>
+    <div><dt>Date</dt><dd>{l['first_seen']}</dd></div></dl>
+    <h4>What I learned</h4><p>{e(l.get('notes', ''))}</p></div>
+</details>""" for l in sorted(labs, key=lambda x: x["id"]))
+    learning = (f'<h2>Learning log</h2><p class="sub">Practice labs and study notes, kept apart '
+                f'from the findings numbers above.</p>{lab_rows}') if labs else ""
 
     filters = "".join(
         f'<button data-f="{s}">{STAGE_LABEL[s]}</button>' for s in STATUSES
@@ -223,6 +251,7 @@ footer a{{color:var(--accent)}}
 <h2>All findings</h2>
 <div class="filters" id="filters">{filters}</div>
 <div id="list">{''.join(rows)}</div>
+{learning}
 <footer>Built {date.today()} from <code>findings/*.yml</code>. Raw data: <a href="findings.csv">findings.csv</a>.</footer>
 </main>
 <script>
@@ -239,24 +268,26 @@ footer a{{color:var(--accent)}}
 
 
 def write_csv(findings):
-    cols = ["id", "title", "cwe", "owasp", "severity", "status", "repo", "files",
-            "tool", "rule", "first_seen", "closed_at"]
+    cols = ["id", "title", "type", "cwe", "cve", "owasp", "severity", "status", "target",
+            "files", "tool", "reference", "first_seen", "closed_at"]
     with open(OUT_DIR / "findings.csv", "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
         w.writerow(cols)
         for f in findings:
             row = [f.get(c, "") for c in cols]
-            row[cols.index("files")] = "; ".join(f["files"])
+            row[cols.index("files")] = "; ".join(f.get("files", []))
             w.writerow(row)
 
 
 def main():
     OUT_DIR.mkdir(exist_ok=True)
-    findings = load_findings()
+    everything = load_findings()
+    findings = [f for f in everything if f["type"] != "lab"]
+    labs = [f for f in everything if f["type"] == "lab"]
     m = compute_metrics(findings)
-    (OUT_DIR / "index.html").write_text(render(findings, m), encoding="utf-8")
-    write_csv(findings)
-    print(f"Built {len(findings)} findings -> docs/index.html, docs/findings.csv")
+    (OUT_DIR / "index.html").write_text(render(findings, m, labs), encoding="utf-8")
+    write_csv(everything)
+    print(f"Built {len(findings)} findings and {len(labs)} learning entries -> docs/index.html, docs/findings.csv")
 
 
 if __name__ == "__main__":

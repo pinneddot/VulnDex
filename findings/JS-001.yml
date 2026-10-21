@@ -1,13 +1,14 @@
 id: JS-001
+type: code-review
 title: SQL Injection in Login
 cwe: CWE-89
 owasp: A03:2021 Injection
 severity: critical
 status: retest-passed
-repo: juice-shop
+target: juice-shop
 files: [routes/login.ts:34]
 tool: semgrep
-rule: javascript.sequelize.security.audit.sequelize-injection-express
+reference: javascript.sequelize.security.audit.sequelize-injection-express
 first_seen: 2026-10-06
 closed_at: 2026-10-13
 description: User-supplied email is concatenated into a raw SQL query, so a crafted value changes the query itself.

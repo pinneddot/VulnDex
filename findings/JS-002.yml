@@ -1,13 +1,14 @@
 id: JS-002
+type: code-review
 title: Hardcoded JWT Private Key
 cwe: CWE-798
 owasp: A07:2021 Identification and Authentication Failures
 severity: high
 status: remediated
-repo: juice-shop
+target: juice-shop
 files: [lib/insecurity.ts:23]
 tool: semgrep
-rule: generic.secrets.security.detected-private-key
+reference: generic.secrets.security.detected-private-key
 first_seen: 2026-10-06
 closed_at: 2026-10-15
 description: The key used to sign login tokens is written in the source code, so anyone with repo access can forge tokens.

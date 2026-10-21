@@ -1,56 +1,75 @@
-# VAPT Findings Tracker
+# VulnDex
 
-A small, durable tracker for code-review (VAPT) findings. Every finding is one plain text file.
-A script turns those files into a static dashboard that GitHub Pages publishes automatically.
+My running index of security findings and lessons, tracked from first discovery to confirmed fix.
 
-**Demo data:** the sample findings come from OWASP Juice Shop, an intentionally vulnerable practice app.
+**Live dashboard:** https://pinneddot.github.io/VulnDex/
+
+## Why I built this
+
+I work in identity and access management and I am growing into application security testing, mainly code reviews and penetration testing. At work, findings live in tickets and spreadsheets that I can't share. VulnDex is the public version of how I work: the same triage habits and the same lifecycle, applied to practice targets so everything here is mine to show.
+
+It also solves a practical problem. I wanted one place where a finding is more than a line in a report: where it came from, how I confirmed it, what I recommended, and whether the fix held up on retest.
+
+## What's in it
+
+- **Findings:** each one is a small text file in `findings/`, with its weakness type (CWE), severity, affected files, recommendation and my review notes.
+- **A live dashboard** that rebuilds itself whenever I push a change: where every finding stands, average time to fix, retest pass rate and how noisy my scanners are.
+- **A learning log** for practice labs and study notes (currently PortSwigger Web Security Academy), kept separate from the findings numbers.
+
+## How a finding moves
+
+`new` → `true-positive` → `remediated` → `retest-passed`
+
+A scanner result that turns out to be noise is closed as `false-positive`. I track that too, because knowing which rules cry wolf saves time.
 
 ## How it works
 
 ```
-semgrep scan --json  ->  ingest_semgrep.py  ->  findings/*.yml  ->  build.py  ->  docs/index.html
-                          (draft findings)       (you triage)        (dashboard)
+scan (Semgrep, manual testing) -> findings/*.yml -> scripts/build.py -> dashboard
 ```
 
-Life of a finding: `new` -> `true-positive` -> `remediated` -> `retest-passed`, or `false-positive` as a side exit.
+1. I scan a target, or test it by hand, and record what I find.
+2. I triage each result: real, or false positive.
+3. `scripts/build.py` turns the files into the dashboard. A GitHub Action runs it on every push and publishes the page.
 
-## Run it locally
+No database, no servers. Everything is plain text in git, so the full history of every finding is preserved.
+
+## Run it yourself
 
 ```bash
 pip install -r requirements.txt
-python scripts/build.py          # then open docs/index.html
+python scripts/build.py        # then open docs/index.html
 ```
 
-## Add findings from a scan
+To start from a Semgrep scan:
 
 ```bash
 semgrep scan --json -o semgrep.json path/to/code
-python scripts/ingest_semgrep.py semgrep.json --repo my-repo --prefix MR
+python scripts/ingest_semgrep.py semgrep.json --repo my-target --prefix MT
 ```
-
-Open the new files in `findings/`, set the status, write the description and recommendation, commit.
-The dashboard rebuilds on every push to `main`.
-
-## Go live (GitHub Pages)
-
-1. Create a GitHub repo and push this folder to `main`.
-2. Settings -> Pages -> Source: **GitHub Actions**.
-3. Push any change. Your dashboard appears at `https://<you>.github.io/<repo>/`.
-
-## Public vs private
-
-- Keep this repo **public** with demo data only (`demo_data: true` in `tracker.yml`).
-- For real work, use a **private** copy of the same code. Never publish employer or client findings.
 
 ## Finding fields
 
-Required: `id, title, cwe, severity, status, repo, first_seen`.
-Optional: `owasp, files, tool, rule, closed_at, description, recommendation, notes`.
-Severity: critical, high, medium, low, info. A bad file stops the build with a clear message.
+| Field | Meaning |
+|---|---|
+| `id`, `title` | Unique ID and short name |
+| `type` | `code-review`, `web-app`, `api`, `infrastructure` or `lab` |
+| `cwe` | The kind of weakness (e.g. CWE-89, SQL injection) |
+| `cve` | Optional. Only when the issue is a published vulnerability in a specific product or version |
+| `severity`, `status` | Critical to info, and where it stands in the lifecycle |
+| `target` | What was tested (a repo, an app, a host) |
+| `tool`, `reference` | How I found it: the tool, plus the scanner rule ID, an OWASP WSTG test ID, or the technique |
+| `files`, `description`, `recommendation`, `notes` | The detail |
+
+## Ground rules
+
+- Only practice targets and intentionally vulnerable apps appear here (such as OWASP Juice Shop). Nothing from an employer or client is ever published.
+- The sample findings are labelled as demo data on the dashboard.
+- Lab entries are my own notes on what I learned, not walkthroughs of solutions.
 
 ## Roadmap
 
-- [ ] Excel report export (Listing / Summary / Details)
+- [ ] Excel and PDF report export
 - [ ] Retest view: what changed between two scans
-- [ ] Jira sync for ticket links
-- [ ] Anonymized metrics export from the private tracker
+- [ ] More finding types: web app, API and infrastructure testing
+- [ ] Anonymized metrics export for private use

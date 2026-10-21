@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>VAPT Findings Tracker</title>
+<title>VulnDex</title>
 <style>
 :root{--ink:#12202e;--paper:#eef1f4;--panel:#fff;--line:#cfd7de;--mute:#5a6b7a;--accent:#1f4e79;
 --critical:#a61e2d;}
@@ -46,8 +46,8 @@ footer a{color:var(--accent)}
 @media (max-width:560px){summary{grid-template-columns:14px 1fr;}.fid,.chip{grid-column:2}.pipeline{flex-wrap:wrap}.seg{flex:1 1 45% !important}.detail{padding-left:1rem}}
 </style></head>
 <body><main>
-<h1>VAPT Findings Tracker</h1>
-<p class="sub">A live view of code-review findings from first scan to passed retest, built from plain files in git.</p>
+<h1>VulnDex</h1>
+<p class="sub">My running index of security findings and lessons, tracked from first discovery to confirmed fix.</p>
 <p class="demo">Demo data: findings from an intentionally vulnerable practice app (OWASP Juice Shop). No employer or client information appears here.</p>
 <h2>Where every finding stands</h2>
 <div class="pipeline"><div class="seg s-new" style="flex:1" title="New"><b>1</b><span>New</span></div><div class="seg s-true-positive" style="flex:2" title="Confirmed"><b>2</b><span>Confirmed</span></div><div class="seg s-remediated" style="flex:1" title="Fixed, awaiting retest"><b>1</b><span>Fixed, awaiting retest</span></div><div class="seg s-retest-passed" style="flex:2" title="Retest passed"><b>2</b><span>Retest passed</span></div></div>
@@ -69,6 +69,8 @@ footer a{color:var(--accent)}
     <p>User-supplied email is concatenated into a raw SQL query, so a crafted value changes the query itself.</p>
     <dl>
       <div><dt>Severity</dt><dd>Critical</dd></div>
+      <div><dt>Type</dt><dd>code-review</dd></div>
+      <div><dt>Target</dt><dd>juice-shop</dd></div>
       <div><dt>Weakness</dt><dd>CWE-89</dd></div>
       <div><dt>OWASP</dt><dd>A03:2021 Injection</dd></div>
       <div><dt>Found by</dt><dd>semgrep / javascript.sequelize.security.audit.sequelize-injection-express</dd></div>
@@ -91,6 +93,8 @@ footer a{color:var(--accent)}
     <p>The key used to sign login tokens is written in the source code, so anyone with repo access can forge tokens.</p>
     <dl>
       <div><dt>Severity</dt><dd>High</dd></div>
+      <div><dt>Type</dt><dd>code-review</dd></div>
+      <div><dt>Target</dt><dd>juice-shop</dd></div>
       <div><dt>Weakness</dt><dd>CWE-798</dd></div>
       <div><dt>OWASP</dt><dd>A07:2021 Identification and Authentication Failures</dd></div>
       <div><dt>Found by</dt><dd>semgrep / generic.secrets.security.detected-private-key</dd></div>
@@ -113,6 +117,8 @@ footer a{color:var(--accent)}
     <p>Search text is marked as trusted HTML, so a script typed into the search box runs in the visitor&#x27;s browser.</p>
     <dl>
       <div><dt>Severity</dt><dd>High</dd></div>
+      <div><dt>Type</dt><dd>code-review</dd></div>
+      <div><dt>Target</dt><dd>juice-shop</dd></div>
       <div><dt>Weakness</dt><dd>CWE-79</dd></div>
       <div><dt>OWASP</dt><dd>A03:2021 Injection</dd></div>
       <div><dt>Found by</dt><dd>semgrep / typescript.angular.security.audit.angular-domsanitizer</dd></div>
@@ -135,9 +141,11 @@ footer a{color:var(--accent)}
     <p>A basket is fetched by the ID in the URL without checking it belongs to the logged-in user.</p>
     <dl>
       <div><dt>Severity</dt><dd>High</dd></div>
+      <div><dt>Type</dt><dd>code-review</dd></div>
+      <div><dt>Target</dt><dd>juice-shop</dd></div>
       <div><dt>Weakness</dt><dd>CWE-639</dd></div>
       <div><dt>OWASP</dt><dd>A01:2021 Broken Access Control</dd></div>
-      <div><dt>Found by</dt><dd>manual / manual-review</dd></div>
+      <div><dt>Found by</dt><dd>manual / WSTG-ATHZ-04</dd></div>
       <div><dt>First seen</dt><dd>2026-10-19</dd></div>
       
     </dl>
@@ -157,6 +165,8 @@ footer a{color:var(--accent)}
     <p>Passwords are hashed with MD5, which is fast to crack with common tools.</p>
     <dl>
       <div><dt>Severity</dt><dd>Medium</dd></div>
+      <div><dt>Type</dt><dd>code-review</dd></div>
+      <div><dt>Target</dt><dd>juice-shop</dd></div>
       <div><dt>Weakness</dt><dd>CWE-328</dd></div>
       <div><dt>OWASP</dt><dd>A02:2021 Cryptographic Failures</dd></div>
       <div><dt>Found by</dt><dd>semgrep / javascript.lang.security.audit.md5-used-as-password</dd></div>
@@ -179,6 +189,8 @@ footer a{color:var(--accent)}
     <p>A folder listing is served publicly, exposing backup and internal files.</p>
     <dl>
       <div><dt>Severity</dt><dd>Medium</dd></div>
+      <div><dt>Type</dt><dd>code-review</dd></div>
+      <div><dt>Target</dt><dd>juice-shop</dd></div>
       <div><dt>Weakness</dt><dd>CWE-538</dd></div>
       <div><dt>OWASP</dt><dd>A05:2021 Security Misconfiguration</dd></div>
       <div><dt>Found by</dt><dd>semgrep / javascript.express.security.audit.express-serve-index</dd></div>
@@ -201,6 +213,8 @@ footer a{color:var(--accent)}
     <p>Math.random() flagged, but it is only used to generate test seed data.</p>
     <dl>
       <div><dt>Severity</dt><dd>Low</dd></div>
+      <div><dt>Type</dt><dd>code-review</dd></div>
+      <div><dt>Target</dt><dd>juice-shop</dd></div>
       <div><dt>Weakness</dt><dd>CWE-338</dd></div>
       <div><dt>OWASP</dt><dd>A02:2021 Cryptographic Failures</dd></div>
       <div><dt>Found by</dt><dd>semgrep / javascript.lang.security.audit.insecure-random</dd></div>
@@ -212,6 +226,27 @@ footer a{color:var(--accent)}
     <h4>Reviewer notes</h4><p>Closed as false positive. Grep confirmed it is never imported by production code.</p>
   </div>
 </details></div>
+<h2>Learning log</h2><p class="sub">Practice labs and study notes, kept apart from the findings numbers above.</p>
+<details class="row">
+  <summary><span class="dot" style="background:var(--accent)"></span>
+    <span class="fid">WSA-001</span><span class="ftitle">Path traversal</span>
+    <span class="chip">in-progress</span></summary>
+  <div class="detail"><p>Study notes on path traversal (reading files outside the intended folder by manipulating a file path).</p>
+    <dl><div><dt>Weakness</dt><dd>CWE-22</dd></div>
+    <div><dt>Where</dt><dd>PortSwigger Web Security Academy</dd></div>
+    <div><dt>Date</dt><dd>2026-10-20</dd></div></dl>
+    <h4>What I learned</h4><p>Add what you learned here, in your own words (how it works, how to spot it, how to prevent it).</p></div>
+</details>
+<details class="row">
+  <summary><span class="dot" style="background:var(--accent)"></span>
+    <span class="fid">WSA-002</span><span class="ftitle">Access control</span>
+    <span class="chip">in-progress</span></summary>
+  <div class="detail"><p>Study notes on access control (making sure users can only do and see what they are allowed to).</p>
+    <dl><div><dt>Weakness</dt><dd>CWE-284</dd></div>
+    <div><dt>Where</dt><dd>PortSwigger Web Security Academy</dd></div>
+    <div><dt>Date</dt><dd>2026-10-19</dd></div></dl>
+    <h4>What I learned</h4><p>Add what you learned here, in your own words (vertical vs horizontal escalation, IDOR, how to prevent it).</p></div>
+</details>
 <footer>Built 2026-10-20 from <code>findings/*.yml</code>. Raw data: <a href="findings.csv">findings.csv</a>.</footer>
 </main>
 <script>

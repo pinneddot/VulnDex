@@ -1,13 +1,14 @@
 id: JS-005
+type: code-review
 title: Weak Password Hashing (MD5)
 cwe: CWE-328
 owasp: A02:2021 Cryptographic Failures
 severity: medium
 status: true-positive
-repo: juice-shop
+target: juice-shop
 files: [lib/insecurity.ts:43]
 tool: semgrep
-rule: javascript.lang.security.audit.md5-used-as-password
+reference: javascript.lang.security.audit.md5-used-as-password
 first_seen: 2026-10-08
 description: Passwords are hashed with MD5, which is fast to crack with common tools.
 recommendation: Switch to bcrypt, scrypt or Argon2 with a per-user salt.

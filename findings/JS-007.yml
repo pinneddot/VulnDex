@@ -1,13 +1,14 @@
 id: JS-007
+type: code-review
 title: Exposed Directory Listing (/ftp)
 cwe: CWE-538
 owasp: A05:2021 Security Misconfiguration
 severity: medium
 status: retest-passed
-repo: juice-shop
+target: juice-shop
 files: [server.ts:262]
 tool: semgrep
-rule: javascript.express.security.audit.express-serve-index
+reference: javascript.express.security.audit.express-serve-index
 first_seen: 2026-10-07
 closed_at: 2026-10-14
 description: A folder listing is served publicly, exposing backup and internal files.
