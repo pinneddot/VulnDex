@@ -5,5 +5,5 @@ cwe: CWE-284
 target: PortSwigger Web Security Academy
 status: in-progress
 first_seen: 2026-10-19
-description: Study notes on access control (making sure users can only do and see what they are allowed to).
-notes: Add what you learned here, in your own words (vertical vs horizontal escalation, IDOR, how to prevent it).
+description: "Study notes on access control: users should only reach what they are allowed to."
+notes: "Add what you learned here, in your own words."
